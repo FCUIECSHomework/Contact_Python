@@ -1,22 +1,24 @@
+# coding=utf-8
 import jsonContact as jc
 
 
 def printSelectTable():
-    print("input your select:")
     print("	(1)List Contact")
     print("	(2)New Contact")
     print("	(3)Edit Contact")
     print("	(4)Delete Contact")
     print("	(5)Exit")
+    print("input your select:", end=" ")
 
 
 while True:
-    ContactsList = jc.JsonContact()
-    select = input(printSelectTable())
+    ContactsList = jc.JsonContact("test.json")
+    printSelectTable()
+    select = input()
     if select == '1':
         userObjectArray = ContactsList.getAllContacts()
         for userObject in userObjectArray:
-            print(str(userObject))
+            print(userObject)
     elif select == '2':
         print("Please input user data:")
         name = input("Name: ")

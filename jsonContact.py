@@ -1,22 +1,23 @@
 import json
 import uuid
-
+from userObject import *
 
 class JsonContact:
     def __init__(self, filename=None):
         self.jsonObject = None
-        self.loadJsonFile(filename)
+        self.filename = filename
+        self.loadJsonFile()
 
-    def loadJsonFile(self, filename):
+    def loadJsonFile(self):
         try:
-            with open(filename) as jsonFile:
+            with open(self.filename) as jsonFile:
                 self.jsonObject = json.load(jsonFile)
         except:
             print("Error: Fail to load JSON file. Does the file exist?")
 
-    def writeJsonFile(self, filename):
+    def writeJsonFile(self):
         try:
-            with open(filename, 'w') as jsonFile:
+            with open(self.filename, 'w') as jsonFile:
                 json.dump(self.jsonObject, jsonFile, sort_keys=False, indent=4)
         except:
             print("Error: Fail to write JSON file. Does the file exist?")
@@ -26,7 +27,12 @@ class JsonContact:
         return self.jsonObject.keys()
 
     def getAllContacts(self):
-        return self.jsonObject.values()
+        self.writeJsonFile()
+        userObjectArray = []
+        for i in self.jsonObject.keys():
+            userObjectArray.append(userObject(jsonObject=self.jsonObject.get(i)))
+        return userObjectArray
+
 
     def registerContact(self, **contactElement):
         newContactUUID = uuid.uuid4()

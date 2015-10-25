@@ -3,17 +3,14 @@ class userObject:
         self.name = jsonObject.get("name")
         self.line = jsonObject.get("line")
         self.Email = jsonObject.get("Email")
-        self.uuid = jsonObject.get("uuid")
+        self.UUID = jsonObject.get("uuid")
         self.telephone = jsonObject.get("telephone")
 
     def __str__(self):
-        print(self.getUUID() + ":")
-        print("Name:	" + self.getName())
-        print("Email:	" + self.getEmail())
-        print("Line:	" + self.GetLine())
-        print("Telephone:")
+        objStr = self.getUUID() + ":\nName:	" + self.getName() + "\nEmail:	" + self.getEmail() + "\nLine:	" + self.getLine() + "Telephone: \n"
         for phone in self.getTelephone():
-            print("	" + phone)
+            objStr += ("	" + phone + "\n")
+        return objStr
 
     def __repr__(self):
         return self.__str__()
