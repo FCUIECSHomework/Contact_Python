@@ -2,6 +2,7 @@ import json
 import uuid
 from userObject import *
 
+
 class JsonContact:
     def __init__(self, filename=None):
         self.jsonObject = None
@@ -32,7 +33,6 @@ class JsonContact:
         for i in self.jsonObject.keys():
             userObjectArray.append(userObject(jsonObject=self.jsonObject.get(i)))
         return userObjectArray
-
 
     def registerContact(self, **contactElement):
         newContactUUID = uuid.uuid4()

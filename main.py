@@ -13,6 +13,9 @@ def printSelectTable():
 
 while True:
     ContactsList = jc.JsonContact("test.json")
+
+    # Python does not have switch...case()
+    # so, use if...elif...else instead.
     printSelectTable()
     select = input()
     if select == '1':
