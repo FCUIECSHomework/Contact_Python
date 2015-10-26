@@ -66,3 +66,11 @@ class JsonContact:
             if "telephone" in contactElement:
                 self.jsonObject[uuid]["telephone"] = contactElement["telephone"]
             self.writeJsonFile()
+
+    def getContact(self, uuid=None):
+        if uuid not in self.jsonObject:
+            print("Error: No User Found!Wrong UUID?")
+        elif uuid is not None:
+            print("Error: No UUID")
+        else:
+            return self.jsonObject[uuid]
