@@ -25,27 +25,25 @@ class GUI(Frame):
         window = Toplevel()
         window.focus_set()
         window.title("Add Contact")
-        name = Label(window, text="Name ")
-        name.grid(row=0, column=0)
-        nameEntry = Entry(window, width=30)
-        nameEntry.grid(row=0, column=1)
-        line = Label(window, text="Line ")
-        line.grid(row=1, column=0)
-        lineEntry = Entry(window, width=30)
-        lineEntry.grid(row=1, column=1)
-        Email = Label(window, text="Email ")
-        Email.grid(row=2, column=0)
-        EmailEntry = Entry(window, width=30)
-        EmailEntry.grid(row=2, column=1)
-        telephone = Label(window, text="Phone ")
-        telephone.grid(row=3, column=0)
-        telephoneEntry = ScrolledText(window, width=37)
-        telephoneEntry.grid(row=3, column=1)
+        window.resizable(width=FALSE, height=FALSE)
 
-        okButton = Button(window, text="Finish",
-                          command=lambda: self.addContact(window, name=nameEntry.get(), line=lineEntry.get(),
-                                                          Email=EmailEntry.get(),
-                                                          Telephone=telephoneEntry.get(1.0, END)))
+        Label(window, text="Name ").grid(row=0, column=0)
+        name = Entry(window, width=30)
+        name.grid(row=0, column=1)
+
+        Label(window, text="Line ").grid(row=1, column=0)
+        line = Entry(window, width=30)
+        line.grid(row=1, column=1)
+
+        Label(window, text="Email ").grid(row=2, column=0)
+        Email = Entry(window, width=30)
+        Email.grid(row=2, column=1)
+
+        Label(window, text="Phone ").grid(row=3, column=0)
+        phone = ScrolledText(window, width=37)
+        phone.grid(row=3, column=1)
+
+        okButton = Button(window, text="Finish", command=lambda: self.addContact(window, name=name.get(), line=line.get(), Email=Email.get(), Telephone=phone.get(1.0, END)))
         okButton.grid(row=4)
         cancelButton = Button(window, text="Cancel", command=window.destroy)
         cancelButton.grid(row=4, column=1, sticky=E)
@@ -76,6 +74,7 @@ class GUI(Frame):
         window = Toplevel()
         window.focus_set()
         window.title("Edit Contact")
+        window.resizable(width=FALSE, height=FALSE)
 
         Label(window, text="Name ").grid(row=0, column=0)
         name = Entry(window, width=30)
