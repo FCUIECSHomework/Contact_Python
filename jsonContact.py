@@ -10,32 +10,30 @@ class JsonContact:
         self.loadJsonFile()
 
     def loadJsonFile(self):
-        try:
-            with open(self.filename) as jsonFile:
-                self.jsonObject = json.load(jsonFile)
-        except:
-            print("Error: Fail to load JSON file. Does the file exist?")
+        # try:
+        with open(self.filename) as jsonFile:
+            self.jsonObject = json.load(jsonFile)
+            jsonFile.close()
+            # except:
+            #    print("Error: Fail to load JSON file. Does the file exist?")
 
     def writeJsonFile(self):
-        try:
-            with open(self.filename, 'w') as jsonFile:
-                json.dump(self.jsonObject, jsonFile, sort_keys=False, indent=4)
-        except:
-            print("Error: Fail to write JSON file. Does the file exist?")
+        # try:
+        with open(self.filename, 'w') as jsonFile:
+            json.dump(self.jsonObject, jsonFile, sort_keys=False, indent=4)
+            jsonFile.close()
+        # except:
+        #     print("Error: Fail to write JSON file. Does the file exist?")
         self.loadJsonFile()
 
     def getAllKeys(self):
         return self.jsonObject.keys()
 
     def getAllContacts(self):
-        self.writeJsonFile()
-        userObjectArray = []
-        for i in self.jsonObject.keys():
-            userObjectArray.append(userObject(jsonObject=self.jsonObject.get(i)))
-        return userObjectArray
+        return self.jsonObject.values()
 
     def registerContact(self, **contactElement):
-        newContactUUID = uuid.uuid4()
+        newContactUUID = str(uuid.uuid4())
         newContact = {}
         if "name" in contactElement:
             newContact.update({"name": contactElement["name"]})
@@ -44,7 +42,12 @@ class JsonContact:
         if "Email" in contactElement:
             newContact.update({"Email": contactElement["Email"]})
         if "telephone" in contactElement:
-            newContact.update({"telephone": contactElement["telephone"]})
+            phoneList = contactElement["telephone"].split("\n")
+            while phoneList.count('') > 0:
+                phoneList.remove('')
+            while phoneList.count(' ') > 0:
+                phoneList.remove(' ')
+            newContact.update({"telephone": phoneList})
         newContact.update({"uuid": newContactUUID})
         self.jsonObject.update({newContactUUID: newContact})
         self.writeJsonFile()
@@ -64,7 +67,12 @@ class JsonContact:
             if "Email" in contactElement:
                 self.jsonObject[uuid]["Email"] = contactElement["Email"]
             if "telephone" in contactElement:
-                self.jsonObject[uuid]["telephone"] = contactElement["telephone"]
+                phoneList = contactElement["telephone"].split("\n")
+                while phoneList.count('') > 0:
+                    phoneList.remove('')
+                while phoneList.count(' ') > 0:
+                    phoneList.remove(' ')
+                self.jsonObject[uuid]["telephone"] = phoneList
             self.writeJsonFile()
 
     def getContact(self, uuid=None):
@@ -78,4 +86,4 @@ class JsonContact:
 
     def reload(self):
         self.loadJsonFile()
-        return self.jsonObject
+        return self

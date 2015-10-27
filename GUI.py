@@ -1,27 +1,28 @@
 from tkinter import *
 from tkinter.scrolledtext import ScrolledText
+import tkinter.messagebox as messageBox
 from jsonContact import *
 
 
 class GUI(Frame):
-    def __init__(self, master=None):
+    def __init__(self, master=None, file=None):
         Frame.__init__(self, master)
         master.title("ContactsList")
         self.grid()
-        self.listBox = Listbox(self, width=50, selectmode=EXTENDED)
+        self.listBox = Listbox(self, width=50)
         self.listBox.grid(row=0, column=0, columnspan=2)
         self.addButton = Button(self, text="Add Contact", command=lambda: self.addContactView())
         self.addButton.grid(row=1, column=0)
         self.exitButton = Button(self, text="Exit", command=self.quit)
         self.exitButton.grid(row=1, column=1)
         self.uuidList = []
-        self.jsonObject = None
+        self.jsonObject = JsonContact(file)
         self.loadContactsList()
         self.current = None
         self.poll()
 
     def addContactView(self):
-        window = Toplevel(self)
+        window = Toplevel()
         window.focus_set()
         window.title("Add Contact")
         name = Label(window, text="Name ")
@@ -43,58 +44,113 @@ class GUI(Frame):
 
         okButton = Button(window, text="Finish",
                           command=lambda: self.addContact(window, name=nameEntry.get(), line=lineEntry.get(),
-                                                          Email=EmailEntry.get(), Telephone=telephoneEntry.get(1.0, END)))
-        okButton.grid(column=0)
+                                                          Email=EmailEntry.get(),
+                                                          Telephone=telephoneEntry.get(1.0, END)))
+        okButton.grid(row=4)
         cancelButton = Button(window, text="Cancel", command=window.destroy)
-        cancelButton.grid(column=1)
+        cancelButton.grid(row=4, column=1, sticky=E)
 
     def addContact(self, window, **args):
-        self.jsonObject.registerContact(name=args["name"], line=args["line"], Email=args["Email"], telephone=args["Telephone"])
-        self.jsonObject = self.jsonObject.reload()
+        self.jsonObject.registerContact(name=args["name"], line=args["line"], Email=args["Email"],
+                                        telephone=args["Telephone"])
+        self.listReload()
         window.destroy()
 
+    def delContact(self, theWindow, uuid=None):
+        sure = messageBox.askokcancel(message="Make sure to delete?")
+        if sure:
+            self.jsonObject.removeContact(uuid)
+            self.listReload()
+            theWindow.destroy()
+
+    def editContact(self, theWindow, infoWindow, **args):
+        sure = messageBox.askokcancel(message="Make sure to edit?")
+        if sure:
+            theWindow.destroy()
+            infoWindow.destroy()
+            self.jsonObject.editContact(uuid=args["uuid"], name=args["name"], line=args["line"], Email=args["Email"],
+                                        telephone=args["Telephone"])
+            self.listReload()
+
+    def editContactView(self, infoWindow, Contact):
+        window = Toplevel()
+        window.focus_set()
+        window.title("Edit Contact")
+
+        Label(window, text="Name ").grid(row=0, column=0)
+        name = Entry(window, width=30)
+        name.grid(row=0, column=1)
+        name.insert(0, Contact["name"])
+
+        Label(window, text="Line ").grid(row=1, column=0)
+        line = Entry(window, width=30)
+        line.grid(row=1, column=1)
+        line.insert(0, Contact["line"])
+
+        Label(window, text="Email ").grid(row=2, column=0)
+        Email = Entry(window, width=30)
+        Email.grid(row=2, column=1)
+        Email.insert(0, Contact["Email"])
+
+        Label(window, text="Phone ").grid(row=3, column=0)
+        telephone = ScrolledText(window, width=37)
+        telephone.grid(row=3, column=1)
+        for i in Contact["telephone"]:
+            telephone.insert(INSERT, str(i) + "\n")
+
+        okButton = Button(window, text="Finish",
+                          command=lambda: self.editContact(window, infoWindow, uuid=Contact["uuid"], name=name.get(),
+                                                           line=line.get(),
+                                                           Email=Email.get(),
+                                                           Telephone=telephone.get(1.0, END)))
+        okButton.grid(row=4)
+        cancelButton = Button(window, text="Cancel", command=window.destroy)
+        cancelButton.grid(row=4, column=1, sticky=E)
+
+    def listReload(self):
+        self.jsonObject = self.jsonObject.reload()
+        del self.listBox
+        self.listBox = Listbox(self, width=50)
+        self.listBox.grid(row=0, column=0, columnspan=2)
+        self.loadContactsList()
+
     def loadContactsList(self):
-        self.listBox.delete(0, END)
-        self.jsonObject = JsonContact("test.json")
         nameList = []
-        for i in self.jsonObject.jsonObject.values():
+        self.uuidList = []
+        for i in self.jsonObject.getAllContacts():
             nameList.append(i["name"])
             self.uuidList.append(i["uuid"])
         for i in range(0, len(nameList)):
             self.listBox.insert(i, nameList[i])
 
     def showContactInfo(self, uuid=None):
-        window = Toplevel(self)
+        window = Toplevel()
         window.focus_set()
         window.title("Contact")
+        window.resizable(width=FALSE, height=FALSE)
         theContact = self.jsonObject.getContact(uuid)
-        name = Label(window, text="Name: ")
-        name.grid(row=0, column=0)
-        jsonName = Label(window, text=theContact.get('name'))
-        jsonName.grid(row=0, column=1, columnspan=2)
 
-        line = Label(window, text="Line: ")
-        line.grid(row=1, column=0)
-        jsonLine = Label(window, text=theContact.get('line'))
-        jsonLine.grid(row=1, column=1, columnspan=2)
+        Label(window, text="Name: ").grid(row=0, column=0)
+        name = Label(window, text=theContact.get('name'), width=25)
+        name.grid(row=0, column=1, columnspan=2)
 
-        Email = Label(window, text="Email: ")
-        Email.grid(row=2, column=0)
-        jsonEmail = Label(window, text=theContact.get('Email'))
-        jsonEmail.grid(row=2, column=1, columnspan=2)
+        Label(window, text="Line: ").grid(row=1, column=0)
+        line = Label(window, text=theContact.get('line'), width=25)
+        line.grid(row=1, column=1, columnspan=2)
 
+        Label(window, text="Email: ").grid(row=2, column=0)
+        Email = Label(window, text=theContact.get('Email'), width=25)
+        Email.grid(row=2, column=1, columnspan=2)
 
-        telephone = Label(window, text="Phone: ")
-        telephone.grid(row=3, column=0)
+        Label(window, text="Phone: ").grid(row=3, column=0)
         i = 3
-        for pnumber in theContact["telephone"]:
-            telephoneNumber = Label(window, text=pnumber)
-            telephoneNumber.grid(row=i, column=1, columnspan=2)
+        for phone in theContact["telephone"]:
+            Label(window, text=phone, width=25).grid(row=i, column=1, columnspan=2)
             i += 1
 
-        editButton = Button(window, text="Edit", command=lambda: window.destroy)
+        editButton = Button(window, text="Edit", command=lambda: self.editContactView(window, theContact))
         editButton.grid(row=i + 1, column=0)
-        deleteButton = Button(window, text="Delete", command=window.destroy)
+        deleteButton = Button(window, text="Delete", command=lambda: self.delContact(window, uuid))
         deleteButton.grid(row=i + 1, column=1)
         closeButton = Button(window, text="Close", command=window.destroy)
         closeButton.grid(row=i + 1, column=2)
@@ -110,4 +166,3 @@ class GUI(Frame):
         select = str(selection)[1]
         if select != ')':
             self.showContactInfo(self.uuidList[int(select)])
-
