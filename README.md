@@ -19,4 +19,5 @@ The GUI part of the program.
 ### jsonContact.py
 Trans json format to python object, some getter/setter of the program.
 
-
+### example.json
+Example file of ContactsList.
