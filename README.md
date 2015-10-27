@@ -5,6 +5,7 @@ Contact of Homework with Python
 - Python 3
 
 ## How to run
+Just run it by using the command following in terminal.
 ``python3 ./main.py``
 
 ## Files
