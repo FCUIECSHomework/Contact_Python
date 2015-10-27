@@ -1,6 +1,5 @@
 import json
 import uuid
-from userObject import *
 
 
 class JsonContact:
@@ -10,20 +9,20 @@ class JsonContact:
         self.loadJsonFile()
 
     def loadJsonFile(self):
-        # try:
-        with open(self.filename) as jsonFile:
-            self.jsonObject = json.load(jsonFile)
-            jsonFile.close()
-            # except:
-            #    print("Error: Fail to load JSON file. Does the file exist?")
+        try:
+            with open(self.filename) as jsonFile:
+                self.jsonObject = json.load(jsonFile)
+                jsonFile.close()
+        except:
+            print("Error: Fail to load JSON file. Does the file exist?")
 
     def writeJsonFile(self):
-        # try:
-        with open(self.filename, 'w') as jsonFile:
-            json.dump(self.jsonObject, jsonFile, sort_keys=False, indent=4)
-            jsonFile.close()
-        # except:
-        #     print("Error: Fail to write JSON file. Does the file exist?")
+        try:
+            with open(self.filename, 'w') as jsonFile:
+                json.dump(self.jsonObject, jsonFile, sort_keys=False, indent=4)
+                jsonFile.close()
+        except:
+            print("Error: Fail to write JSON file. Does the file exist?")
         self.loadJsonFile()
 
     def getAllKeys(self):

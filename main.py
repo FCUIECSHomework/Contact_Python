@@ -8,11 +8,12 @@ if result == "yes":
     filename = askopenfilename(title="開啟通訊錄檔案", filetypes=[('通訊錄(Json)', ".json"), ('所有檔案', '.*')])
 else:
     filename = asksaveasfilename(title="另存通訊錄", filetypes=[('通訊錄(Json)', ".json"), ('所有檔案', '.*')])
-    if filename[:-4:] != ".json":
-        filename += ".json"
-    with open(filename, 'w') as file:
-        json.dump(dict(), file)
-        file.close()
+    if filename != '':
+        if filename[:-4:] != ".json":
+            filename += ".json"
+        with open(filename, 'w') as file:
+            json.dump(dict(), file)
+            file.close()
 Tk().destroy()
 
 if filename != '':
