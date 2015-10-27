@@ -3,8 +3,10 @@ import jsonContact as jc
 from GUI import *
 
 root = Tk()
+root.resizable(width=FALSE, height=FALSE)
 app = GUI(master=root)
 app.mainloop()
+app.focus_force()
 
 #
 # def printSelectTable():

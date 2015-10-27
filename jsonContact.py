@@ -68,9 +68,14 @@ class JsonContact:
             self.writeJsonFile()
 
     def getContact(self, uuid=None):
+        print(self.jsonObject.get(uuid))
         if uuid not in self.jsonObject:
             print("Error: No User Found!Wrong UUID?")
-        elif uuid is not None:
+        elif uuid is None:
             print("Error: No UUID")
         else:
-            return self.jsonObject[uuid]
+            return self.jsonObject.get(uuid)
+
+    def reload(self):
+        self.loadJsonFile()
+        return self.jsonObject
