@@ -11,16 +11,17 @@ class GUI(Frame):
         master.title("ContactsList")
         self.grid()
         self.listBox = Listbox(self, width=50)
-        self.listBox.grid(row=0, column=0, columnspan=2)
-        self.addButton = Button(self, text="Add Contact", command=lambda: self.addContactView())
-        self.addButton.grid(row=1, column=0)
-        self.exitButton = Button(self, text="Exit", command=self.quit)
-        self.exitButton.grid(row=1, column=1)
+        self.widgetInit()
         self.uuidList = []
         self.jsonObject = JsonContact(file)
         self.loadContactsList()
         self.current = None
         self.poll()
+
+    def widgetInit(self):
+        self.listBox.grid(row=0, column=0, columnspan=2)
+        Button(self, text="Add Contact", command=lambda: self.addContactView()).grid(row=1, column=0)
+        Button(self, text="Exit", command=self.quit).grid(row=1, column=1)
 
     def addContactView(self):
         window = Toplevel()
@@ -44,32 +45,12 @@ class GUI(Frame):
         phone = ScrolledText(window, width=37)
         phone.grid(row=3, column=1)
 
-        okButton = Button(window, text="Finish", command=lambda: self.addContact(window, name=name.get(), line=line.get(), Email=Email.get(), Telephone=phone.get(1.0, END)))
+        okButton = Button(window, text="Finish",
+                          command=lambda: self.addContact(window, name=name.get(), line=line.get(), Email=Email.get(),
+                                                          Telephone=phone.get(1.0, END)))
         okButton.grid(row=4)
         cancelButton = Button(window, text="Cancel", command=window.destroy)
         cancelButton.grid(row=4, column=1, sticky=E)
-
-    def addContact(self, window, **args):
-        self.jsonObject.registerContact(name=args["name"], line=args["line"], Email=args["Email"],
-                                        telephone=args["Telephone"])
-        self.listReload()
-        window.destroy()
-
-    def delContact(self, theWindow, uuid=None):
-        sure = messageBox.askokcancel(message="Make sure to delete?")
-        if sure:
-            self.jsonObject.removeContact(uuid)
-            self.listReload()
-            theWindow.destroy()
-
-    def editContact(self, theWindow, infoWindow, **args):
-        sure = messageBox.askokcancel(message="Make sure to edit?")
-        if sure:
-            theWindow.destroy()
-            infoWindow.destroy()
-            self.jsonObject.editContact(uuid=args["uuid"], name=args["name"], line=args["line"], Email=args["Email"],
-                                        telephone=args["Telephone"])
-            self.listReload()
 
     def editContactView(self, infoWindow, Contact):
         window = Toplevel()
@@ -107,22 +88,6 @@ class GUI(Frame):
         cancelButton = Button(window, text="Cancel", command=window.destroy)
         cancelButton.grid(row=4, column=1, sticky=E)
 
-    def listReload(self):
-        self.jsonObject = self.jsonObject.reload()
-        del self.listBox
-        self.listBox = Listbox(self, width=50)
-        self.listBox.grid(row=0, column=0, columnspan=2)
-        self.loadContactsList()
-
-    def loadContactsList(self):
-        nameList = []
-        self.uuidList = []
-        for i in self.jsonObject.getAllContacts():
-            nameList.append(i["name"])
-            self.uuidList.append(i["uuid"])
-        for i in range(0, len(nameList)):
-            self.listBox.insert(i, nameList[i])
-
     def showContactInfo(self, uuid=None):
         window = Toplevel()
         window.focus_set()
@@ -154,6 +119,46 @@ class GUI(Frame):
         deleteButton.grid(row=i + 1, column=1)
         closeButton = Button(window, text="Close", command=window.destroy)
         closeButton.grid(row=i + 1, column=2)
+
+
+    def addContact(self, window, **args):
+        self.jsonObject.registerContact(name=args["name"], line=args["line"], Email=args["Email"],
+                                        telephone=args["Telephone"])
+        self.listReload()
+        window.destroy()
+
+    def delContact(self, theWindow, uuid=None):
+        sure = messageBox.askokcancel(message="Make sure to delete?")
+        if sure:
+            self.jsonObject.removeContact(uuid)
+            self.listReload()
+            theWindow.destroy()
+
+    def editContact(self, theWindow, infoWindow, **args):
+        sure = messageBox.askokcancel(message="Make sure to edit?")
+        if sure:
+            theWindow.destroy()
+            infoWindow.destroy()
+            self.jsonObject.editContact(uuid=args["uuid"], name=args["name"], line=args["line"], Email=args["Email"],
+                                        telephone=args["Telephone"])
+            self.listReload()
+
+    def loadContactsList(self):
+        nameList = []
+        self.uuidList = []
+        for i in self.jsonObject.getAllContacts():
+            nameList.append(i["name"])
+            self.uuidList.append(i["uuid"])
+        for i in range(0, len(nameList)):
+            self.listBox.insert(i, nameList[i])
+
+    def listReload(self):
+        self.jsonObject = self.jsonObject.reload()
+        del self.listBox
+        self.listBox = Listbox(self, width=50)
+        self.listBox.grid(row=0, column=0, columnspan=2)
+        self.loadContactsList()
+
 
     def poll(self):
         now = self.listBox.curselection()

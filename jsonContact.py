@@ -15,6 +15,7 @@ class JsonContact:
                 jsonFile.close()
         except:
             print("Error: Fail to load JSON file. Does the file exist?")
+            exit(1)
 
     def writeJsonFile(self):
         try:
@@ -23,6 +24,7 @@ class JsonContact:
                 jsonFile.close()
         except:
             print("Error: Fail to write JSON file. Does the file exist?")
+            exit(1)
         self.loadJsonFile()
 
     def getAllKeys(self):
